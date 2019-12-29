@@ -1,6 +1,8 @@
 package net.highteq.nativetaglet;
 
-import jdk.javadoc.doclet.Taglet;
+import com.sun.tools.doclets.Taglet;
+import com.jogamp.gluegen.structgen.CStructAnnotationProcessor;
+import com.sun.javadoc.Tag;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.doctree.TextTree;
 import com.sun.source.doctree.UnknownBlockTagTree;
@@ -61,108 +63,103 @@ public class NativeTaglet implements Taglet
     tagletMap.put(tag.getName(), tag);
   }
 
-    /**
-     * Utility function to visit the tree of tags and return the text.
-     * @param tags the list of instances of this tag
-     * @return the text of the tags.
-     */
-    static String getTagsText(DocTree tags) {
-        return new SimpleDocTreeVisitor<String, Void>() {
-            @Override
-            public String visitText(TextTree node, Void unused) {
-                return node.getBody();
-            }
-
-            @Override
-            public String visitUnknownBlockTag(UnknownBlockTagTree node, Void unused) {
-                for(DocTree doctree : node.getContent())
-                    return doctree.accept(this, unused);
-
-                return "";
-            }
-
-            @Override
-            public String visitUnknownInlineTag(UnknownInlineTagTree node, Void unused) {
-                for(DocTree doctree : node.getContent())
-                    return doctree.accept(this, unused);
-
-                return "";
-            }
-
-            @Override
-            protected String defaultAction(DocTree node, Void unused) {
-                return "";
-            }
-
-      }.visit(tags, null);
-  }
-
-  /**
-   * Returns the string representation of a series of instances of
-   * this tag to be included in the generated output.
-   *
-   * @param tags the list of instances of this tag
-   * @param element the element to which the enclosing comment belongs
-   * @return the string representation of the tags to be included in
-   *  the generated output
-   */
   @Override
-  public String toString(List<? extends DocTree> tags, Element element) {
-    String text= getTagsText(tags.get(0)).trim();
-    if(mapping== null)
-      {
-        mapping= new Properties();
-        InputStream in= null;
-        try
-          {
-            URL url;
-            try
-              {
-                url = new URL(System.getProperty("nativetaglet.mapping","file:native-taglet.properties"));
-              }
-            catch (final MalformedURLException e)
-              {
-                url = new URL("file:"+System.getProperty("nativetaglet.mapping","file:native-taglet.properties"));
-              }
-            in= url.openStream();
-            mapping.load(in);
-          }
-        catch (final Exception e)
-          {
-            System.err.println("[NATIVE TAGLET] Could not read mapping file");
-            System.err.println("-->");
-            e.printStackTrace(System.err);
-            System.err.println("<--");
-            System.err.println("[NATIVE TAGLET] !!! NO LINKS WILL BE GENERATED !!!");
-          }
-        finally
-          {
-            if(in!=null) try{ in.close(); }catch(final Exception ignore){}
-          }
-      }
+	public boolean inConstructor() {
+		return true;
+	}
 
-    if(mapping!=null)
-      {
-        // First check to see whether this key exists in the mapping
-        String url = mapping.getProperty(text);
-        if (url == null) {
-          // Try iterating the keySet seeing if we can find a partial match
-          // In the OpenGL spec this handles the case of glVertex -> glVertex3f
-          for(final Iterator i= mapping.keySet().iterator(); i.hasNext();) {
-            final String name= (String) i.next();
-            if (hasOpenGLSuffix(text, name)) {
-              url = mapping.getProperty(name);
-              break;
-            }
-          }
-        }
-        if (url != null) {
-          url = mapping.getProperty("nativetaglet.baseUrl", "") + url;
-          text = "<a href=\"" + url + "\">" + text + "</a>";
-        }
-      }
-    return text;
-  }
+	@Override
+	public boolean inField() {
+		return true;
+	}
+
+	@Override
+	public boolean inMethod() {
+		return true;
+	}
+
+	@Override
+	public boolean inOverview() {
+		return true;
+	}
+
+	@Override
+	public boolean inPackage() {
+		return true;
+	}
+
+	@Override
+	public boolean inType() {
+		return true;
+	}
+
+	@Override
+	public String toString(Tag tag) {
+		String text= tag.text();
+	    if(mapping== null)
+	      {
+	        mapping= new Properties();
+	        InputStream in= null;
+	        try
+	          {
+	            URL url;
+	            try
+	              {
+	                url = new URL(System.getProperty("nativetaglet.mapping","file:native-taglet.properties"));
+	              }
+	            catch (final MalformedURLException e)
+	              {
+	                url = new URL("file:"+System.getProperty("nativetaglet.mapping","file:native-taglet.properties"));
+	              }
+	            in= url.openStream();
+	            mapping.load(in);
+	          }
+	        catch (final Exception e)
+	          {
+	            System.err.println("[NATIVE TAGLET] Could not read mapping file");
+	            System.err.println("-->");
+	            e.printStackTrace(System.err);
+	            System.err.println("<--");
+	            System.err.println("[NATIVE TAGLET] !!! NO LINKS WILL BE GENERATED !!!");
+	          }
+	        finally
+	          {
+	            if(in!=null) try{ in.close(); }catch(final Exception ignore){}
+	          }
+	      }
+
+	    if(mapping!=null)
+	      {
+	        // First check to see whether this key exists in the mapping
+	        String url = mapping.getProperty(text);
+	        if (url == null) {
+	          // Try iterating the keySet seeing if we can find a partial match
+	          // In the OpenGL spec this handles the case of glVertex -> glVertex3f
+	          for(final Iterator i= mapping.keySet().iterator(); i.hasNext();) {
+	            final String name= (String) i.next();
+	            if (hasOpenGLSuffix(text, name)) {
+	              url = mapping.getProperty(name);
+	              break;
+	            }
+	          }
+	        }
+	        if (url != null) {
+	          url = mapping.getProperty("nativetaglet.baseUrl", "") + url;
+	          text = "<a href=\"" + url + "\">" + text + "</a>";
+	        }
+	      }
+	    return text;
+	}
+
+	@Override
+	public String toString(Tag[] tags) {
+		StringBuffer result = new StringBuffer();
+		for (Tag tag : tags) {
+			result.append(toString(tag));
+			result.append("<br>");
+		}
+		return result.toString();
+	}
 
   private static final String[] openGLSuffixes = {
     "b",
@@ -210,15 +207,4 @@ public class NativeTaglet implements Taglet
     return false;
   }
 
-    @Override
-    public Set<Location> getAllowedLocations() {
-        Set<Location> locations = new HashSet<Location>();
-        locations.add(Location.FIELD);
-        locations.add(Location.CONSTRUCTOR);
-        locations.add(Location.METHOD);
-        locations.add(Location.OVERVIEW);
-        locations.add(Location.PACKAGE);
-        locations.add(Location.TYPE);
-        return locations;
-    }
 }
