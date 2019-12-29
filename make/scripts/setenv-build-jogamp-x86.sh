@@ -28,9 +28,9 @@ if [ ! -z "$J2RE_HOME" -a ! -z "$JAVA_HOME" ] ; then
 fi 
 
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /usr/lib/jvm/java-11-openjdk-i386 ] ; then
-        J2RE_HOME=/usr/lib/jvm/java-11-openjdk-i386
-        JAVA_HOME=/usr/lib/jvm/java-11-openjdk-i386
+    if [ -e /usr/lib/jvm/java-8-openjdk-i386 ] ; then
+        J2RE_HOME=/usr/lib/jvm/java-8-openjdk-i386
+        JAVA_HOME=/usr/lib/jvm/java-8-openjdk-i386
         PATH=$JAVA_HOME/bin:$PATH
         export J2RE_HOME JAVA_HOME
         FOUND_JAVA=1
@@ -38,8 +38,8 @@ if [ -z "$FOUND_JAVA" ] ; then
 fi 
 
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /opt-linux-x86/jre11 -a -e /opt-linux-x86/jdk11 ] ; then
-        J2RE_HOME=/opt-linux-x86/jre11
+    if [ -e /opt-linux-x86/jre8 -a -e /opt-linux-x86/jdk11 ] ; then
+        J2RE_HOME=/opt-linux-x86/jre8
         JAVA_HOME=/opt-linux-x86/jdk11
         PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
         export J2RE_HOME JAVA_HOME
@@ -59,8 +59,8 @@ if [ -z "$FOUND_JAVA" ] ; then
     fi
 fi
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /opt-solaris-x86/jre11 -a -e /opt-solaris-x86/jdk11 ] ; then
-        J2RE_HOME=/opt-solaris-x86/jre11
+    if [ -e /opt-solaris-x86/jre8 -a -e /opt-solaris-x86/jdk11 ] ; then
+        J2RE_HOME=/opt-solaris-x86/jre8
         JAVA_HOME=/opt-solaris-x86/jdk11
         PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
         export J2RE_HOME JAVA_HOME

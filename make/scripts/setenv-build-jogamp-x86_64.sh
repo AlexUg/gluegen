@@ -28,9 +28,9 @@ if [ ! -z "$J2RE_HOME" -a ! -z "$JAVA_HOME" ] ; then
 fi 
 
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /usr/lib/jvm/java-11-openjdk-amd64 ] ; then
-        J2RE_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-        JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+    if [ -e /usr/lib/jvm/java-8-openjdk-amd64 ] ; then
+        J2RE_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+        JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
         PATH=$JAVA_HOME/bin:$PATH
         export J2RE_HOME JAVA_HOME
         FOUND_JAVA=1
@@ -38,8 +38,8 @@ if [ -z "$FOUND_JAVA" ] ; then
 fi 
 
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /opt-linux-x86_64/jre11 -a -e /opt-linux-x86_64/jdk11 ] ; then
-        J2RE_HOME=/opt-linux-x86_64/jre11
+    if [ -e /opt-linux-x86_64/jre8 -a -e /opt-linux-x86_64/jdk11 ] ; then
+        J2RE_HOME=/opt-linux-x86_64/jre8
         JAVA_HOME=/opt-linux-x86_64/jdk11
         PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
         export J2RE_HOME JAVA_HOME
@@ -61,10 +61,10 @@ if [ -z "$FOUND_JAVA" ] ; then
     fi
 fi
 if [ -z "$FOUND_JAVA" ] ; then
-    if [ -e /opt-solaris-x86_64/jre11 -a -e /opt-solaris-x86_64/jdk11 ] ; then
+    if [ -e /opt-solaris-x86_64/jre8 -a -e /opt-solaris-x86_64/jdk11 ] ; then
         # make a symbolic link: /opt-solaris-x86_64/jre7/bin/amd64/bin$ ln -s . bin
         # since ant looks for $JAVA_HOME/bin/java and we need to force the 64bit JVM
-        J2RE_HOME=/opt-solaris-x86_64/jre11/bin/amd64
+        J2RE_HOME=/opt-solaris-x86_64/jre8/bin/amd64
         JAVA_HOME=/opt-solaris-x86_64/jdk11/bin/amd64
         PATH=$J2RE_HOME:$JAVA_HOME:$PATH
         export J2RE_HOME JAVA_HOME
